@@ -1,0 +1,121 @@
+import type { Author, Category, Comment, Post } from '../types';
+
+const img = (id: string, w = 1200) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+export const categories: Category[] = ['Engineering', 'Design', 'Productivity', 'AI', 'Career'];
+
+export const authors: Record<string, Author> = {
+  mia: { id: 'mia', name: 'Mia Chen', role: 'Staff Engineer', avatar: 'https://i.pravatar.cc/160?img=47',
+    bio: 'Mia builds distributed systems and writes about making them boring. Ten years across fintech and infrastructure, currently obsessed with failure modes.',
+    social: { twitter: '#', github: '#', linkedin: '#' } },
+  leo: { id: 'leo', name: 'Leo Martins', role: 'Design Lead', avatar: 'https://i.pravatar.cc/160?img=12',
+    bio: 'Leo leads product design and believes spacing is a moral issue. Ex-agency, now in-house, and a lifelong fan of well-set type.',
+    social: { twitter: '#', github: '#', linkedin: '#' } },
+  sara: { id: 'sara', name: 'Sara Okafor', role: 'Productivity Coach', avatar: 'https://i.pravatar.cc/160?img=32',
+    bio: 'Sara helps teams protect deep work. She has coached over 200 teams toward calmer, more sustainable ways of shipping.',
+    social: { twitter: '#', github: '#', linkedin: '#' } },
+  dev: { id: 'dev', name: 'Dev Patel', role: 'ML Researcher', avatar: 'https://i.pravatar.cc/160?img=15',
+    bio: 'Dev works on applied language models and evaluation. He explains machine learning without the hype and with plenty of code.',
+    social: { twitter: '#', github: '#', linkedin: '#' } },
+};
+
+export const posts: Post[] = [
+  { id: 1, title: 'Evaluating LLMs Without Fooling Yourself', category: 'AI', authorId: 'dev',
+    excerpt: 'Benchmarks lie gently. Here is a practical way to build evals you can actually trust in production.',
+    cover: img('photo-1677442136019-21780ecad995'), tags: ['llm', 'evals', 'testing'], readingTime: 9, publishedAt: '2026-09-14', views: 9800, likes: 412,
+    content: [
+      { type: 'p', text: 'Every team shipping a language model feature eventually asks the same question: is the new version actually better? Public leaderboards will not answer it for your product, and gut feeling answers it badly.' },
+      { type: 'h', text: 'Start with failure, not scores' },
+      { type: 'p', text: 'Collect twenty real failures from production logs before writing a single metric. Each failure becomes a test case with a clear pass condition, and the set grows every time something breaks.' },
+      { type: 'quote', text: 'If your eval never surprises you, it is measuring your assumptions.' },
+      { type: 'code', lang: 'ts', text: 'const cases = failures.map((f) => ({\n  input: f.prompt,\n  check: (out: string) => !out.includes(f.badPattern),\n}));' },
+      { type: 'image', src: img('photo-1620712943543-bcc4688e7485', 1000), caption: 'Evals are only as good as the failures they encode.' },
+      { type: 'callout', text: 'Freeze your eval set for each release cycle. Changing it mid-project makes every comparison meaningless.' },
+    ] },
+  { id: 2, title: 'Designing Idempotent APIs That Survive Retries', category: 'Engineering', authorId: 'mia',
+    excerpt: 'Networks fail and clients retry. Your API should never charge the customer twice.',
+    cover: img('photo-1555066931-4365d14bab8c'), tags: ['api', 'backend', 'reliability'], readingTime: 7, publishedAt: '2026-09-08', views: 7400, likes: 298,
+    content: [
+      { type: 'p', text: 'Retries are not an edge case at scale; they are the normal case. Idempotency keys turn a dangerous retry into a harmless one.' },
+      { type: 'h', text: 'The key pattern' },
+      { type: 'p', text: 'Have the client send a unique key per logical operation. Store the key with the response, and return the stored response whenever the key repeats.' },
+      { type: 'code', lang: 'ts', text: 'if (await store.has(key)) return store.get(key);\nconst res = await charge(req);\nawait store.set(key, res, { ttl: 86_400 });\nreturn res;' },
+      { type: 'quote', text: 'Exactly-once delivery is a myth. Exactly-once effect is an engineering choice.' },
+      { type: 'callout', text: "Scope keys per user, or one customer can replay another customer's response." },
+    ] },
+  { id: 3, title: 'The Quiet Power of an 8-Point Spacing Scale', category: 'Design', authorId: 'leo',
+    excerpt: 'Consistent spacing is the cheapest upgrade any interface can get.',
+    cover: img('photo-1561070791-2526d30994b8'), tags: ['ui', 'spacing', 'systems'], readingTime: 5, publishedAt: '2026-09-02', views: 5100, likes: 187,
+    content: [
+      { type: 'p', text: 'Most interfaces feel slightly off not because of color or type, but because spacing is arbitrary. A fixed scale removes a thousand tiny decisions.' },
+      { type: 'h', text: 'Pick a scale and commit' },
+      { type: 'p', text: 'Use multiples of eight for layout and four for tight internals. Group related items closer together than unrelated ones and the hierarchy appears on its own.' },
+      { type: 'image', src: img('photo-1586717791821-3f44a563fa4c', 1000), caption: 'Sketches first, pixels second.' },
+      { type: 'quote', text: 'White space is not empty. It is structure you can feel.' },
+      { type: 'callout', text: 'Audit one screen today: replace every odd margin with the nearest value on your scale.' },
+    ] },
+  { id: 4, title: 'Maker Schedules for Teams That Live in Meetings', category: 'Productivity', authorId: 'sara',
+    excerpt: 'You cannot focus in 30-minute fragments. Redesign the week instead of your willpower.',
+    cover: img('photo-1484480974693-6ca0a78fb36b'), tags: ['focus', 'meetings', 'teams'], readingTime: 6, publishedAt: '2026-08-28', views: 6300, likes: 231,
+    content: [
+      { type: 'p', text: 'Deep work needs long, uninterrupted blocks. A calendar full of half-hour meetings makes that structurally impossible.' },
+      { type: 'h', text: 'Batch the interruptions' },
+      { type: 'p', text: 'Cluster meetings on two fixed days and protect the rest. Teams that try this for a month usually refuse to go back.' },
+      { type: 'quote', text: 'Your calendar is a statement of priorities, whether you meant it or not.' },
+      { type: 'callout', text: 'Start small: one meeting-free morning per week, announced publicly.' },
+    ] },
+  { id: 5, title: 'Type-Safe Event Systems in TypeScript', category: 'Engineering', authorId: 'mia',
+    excerpt: 'Discriminated unions make event-driven code readable and refactor-proof.',
+    cover: img('photo-1461749280684-dccba630e2f6'), tags: ['typescript', 'events', 'architecture'], readingTime: 8, publishedAt: '2026-08-20', views: 8800, likes: 344,
+    content: [
+      { type: 'p', text: 'Stringly-typed events rot quickly. A discriminated union gives you exhaustive handling and autocomplete for free.' },
+      { type: 'code', lang: 'ts', text: 'type Ev =\n  | { type: "created"; id: string }\n  | { type: "deleted"; id: string; by: string };\n\nfunction on(e: Ev) {\n  switch (e.type) {\n    case "created": return e.id;\n    case "deleted": return e.by;\n  }\n}' },
+      { type: 'h', text: 'Exhaustiveness as a safety net' },
+      { type: 'p', text: 'Add a never-check in the default branch. When someone adds a new event, the compiler points at every handler that needs updating.' },
+      { type: 'callout', text: 'Keep payloads small and serializable; you will thank yourself when you add a queue.' },
+    ] },
+  { id: 6, title: 'Prompt Caching: Cut Latency and Cost Together', category: 'AI', authorId: 'dev',
+    excerpt: 'Reusing long prefixes is the easiest optimization most teams skip.',
+    cover: img('photo-1620712943543-bcc4688e7485'), tags: ['llm', 'performance', 'cost'], readingTime: 6, publishedAt: '2026-08-12', views: 7000, likes: 276,
+    content: [
+      { type: 'p', text: 'If every request begins with the same thousand tokens of instructions, you are paying for them repeatedly. Caching the prefix changes the economics.' },
+      { type: 'h', text: 'Structure for reuse' },
+      { type: 'p', text: 'Put stable content first and variable content last. Even small reordering can double your cache hit rate.' },
+      { type: 'quote', text: 'Optimize the part of the prompt that never changes.' },
+      { type: 'callout', text: 'Measure hit rate before and after; assumptions here are usually wrong.' },
+    ] },
+  { id: 7, title: 'Writing a Promotion Case That Writes Itself', category: 'Career', authorId: 'sara',
+    excerpt: 'Keep a brag document and review season stops being stressful.',
+    cover: img('photo-1521737604893-d14cc237d11d'), tags: ['growth', 'management', 'writing'], readingTime: 5, publishedAt: '2026-08-03', views: 4200, likes: 149,
+    content: [
+      { type: 'p', text: 'Promotions go to people whose impact is legible. Legibility is a habit, not a talent.' },
+      { type: 'h', text: 'The weekly log' },
+      { type: 'p', text: 'Every Friday, write three lines: what shipped, who it helped, and what it unlocked. In six months you will have a case.' },
+      { type: 'quote', text: 'Nobody remembers your work as well as you do. Write it down.' },
+      { type: 'callout', text: 'Include numbers wherever possible, even rough ones.' },
+    ] },
+  { id: 8, title: 'Dark Mode Is Not Just Inverted Colors', category: 'Design', authorId: 'leo',
+    excerpt: 'Good dark themes rethink elevation, contrast, and saturation from scratch.',
+    cover: img('photo-1499750310107-5fef28a66643'), tags: ['ui', 'color', 'accessibility'], readingTime: 6, publishedAt: '2026-07-25', views: 6900, likes: 255,
+    content: [
+      { type: 'p', text: 'Inverting a light palette gives you harsh whites and muddy shadows. Dark interfaces need their own logic.' },
+      { type: 'h', text: 'Elevation through lightness' },
+      { type: 'p', text: 'In dark themes, higher surfaces get lighter instead of casting shadows. Desaturate accent colors slightly to avoid vibrating edges.' },
+      { type: 'quote', text: 'Pure black is rarely your friend; near-black with a hint of hue is.' },
+      { type: 'callout', text: 'Test with real content, especially images and charts, not just buttons.' },
+    ] },
+  { id: 9, title: 'The Two-Minute Shutdown Ritual', category: 'Productivity', authorId: 'sara',
+    excerpt: 'End each workday with a tiny checklist and tomorrow starts itself.',
+    cover: img('photo-1484480974693-6ca0a78fb36b', 1000), tags: ['habits', 'focus', 'routine'], readingTime: 4, publishedAt: '2026-07-16', views: 3900, likes: 121,
+    content: [
+      { type: 'p', text: 'Work follows you home when loops stay open. A brief shutdown ritual closes them on paper so your mind can let go.' },
+      { type: 'h', text: 'The checklist' },
+      { type: 'p', text: "Review the day, capture loose tasks, choose tomorrow's top three, and say a closing phrase aloud. It feels silly and it works." },
+      { type: 'callout', text: 'Pair it with a physical cue: close the laptop, then leave the room.' },
+    ] },
+];
+
+export const initialComments: Comment[] = [
+  { id: 1, name: 'Jordan Lee', text: 'Great read. The framing here changed how I think about this.', date: '2 days ago' },
+  { id: 2, name: 'Priya Nair', text: 'Shared with my team. We are trying this next sprint.', date: '1 day ago' },
+];
